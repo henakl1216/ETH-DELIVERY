@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ETH DELIVERY SERVICE</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        /* Hide all content sections by default */
+        .content-section {
+            display: none;
+        }
+        /* Show active section */
+        .content-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-100 font-sans antialiased">
+
+    <header class="bg-blue-800 text-white p-4 shadow-md">
+        <div class="container mx-auto flex flex-col sm:flex-row justify-between items-center">
+            <h1 class="text-3xl font-bold mb-2 sm:mb-0">ETH DELIVERY SERVICE</h1>
+            <nav id="main-nav" class="flex space-x-4 flex-wrap justify-center sm:justify-start">
+                <!-- Navigation buttons will be dynamically added/shown by JavaScript -->
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 mt-4">
+        <div id="user-id-display" class="text-right text-sm text-gray-600 mb-4 hidden">
+            User ID: <span id="user-id-value" class="font-mono bg-gray-200 px-2 py-1 rounded"></span>
+        </div>
+
+        <!-- Admin Login Section -->
+        <section id="admin-login-section" class="flex items-center justify-center min-h-screen bg-gray-100">
+            <div class="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
+                <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Login to ETH DELIVERY SERVICE</h2>
+                <form id="admin-login-form" class="space-y-6">
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                        <input
+                            type="text"
+                            id="username"
+                            value=""
+                            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            value=""
+                            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            required
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out font-semibold"
+                    >
+                        Admin Login
+                    </button>
+                    <div class="text-center mt-4">
+                        <button
+                            type="button"
+                            id="driver-login-button"
+                            class="w-full bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition duration-150 ease-in-out font-semibold"
+                        >
+                            Login as Driver
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Dynamic Content Sections (initially hidden) -->
+        <section id="incoming-products-section" class="content-section p-4 bg-white rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Record Incoming Products</h2>
+            <form id="incoming-form" class="space-y-4">
+                <div>
+                    <label for="incoming-supplier-name" class="block text-sm font-medium text-gray-700">Supplier Name</label>
+                    <input type="text" id="incoming-supplier-name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required />
+                </div>
+                <div>
+                    <label for="incoming-product-name" class="block text-sm font-medium text-gray-700">Product Name</label>
+                    <input type="text" id="incoming-product-name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required />
+                </div>
+                <div>
+                    <label for="incoming-quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+                    <input type="number" id="incoming-quantity" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required min="1" />
+                </div>
+                <div>
+                    <label for="incoming-unit-price" class="block text-sm font-medium text-gray-700">Unit Price (from supplier)</label>
+                    <input type="number" id="incoming-unit-price" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required min="0.01" step="0.01" />
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out">Add Incoming Product</button>
+            </form>
+            <h3 class="text-xl font-bold mt-8 mb-4 text-gray-800">Recent Incoming Records</h3>
+            <div id="incoming-records-list" class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+                <!-- Records will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section id="returned-products-section" class="content-section p-4 bg-white rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Record Returned Products</h2>
+            <form id="returned-form" class="space-y-4">
+                <div>
+                    <label for="returned-supplier-name" class="block text-sm font-medium text-gray-700">Supplier Name</label>
+                    <input type="text" id="returned-supplier-name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required />
+                </div>
+                <div>
+                    <label for="returned-product-name" class="block text-sm font-medium text-gray-700">Product Name</label>
+                    <input type="text" id="returned-product-name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required />
+                </div>
+                <div>
+                    <label for="returned-quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+                    <input type="number" id="returned-quantity" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required min="1" />
+                </div>
+                <div>
+                    <label for="returned-unit-price" class="block text-sm font-medium text-gray-700">Unit Price (for return value)</label>
+                    <input type="number" id="returned-unit-price" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required min="0.01" step="0.01" />
+                </div>
+                <button type="submit" class="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-150 ease-in-out">Add Returned Product</button>
+            </form>
+            <h3 class="text-xl font-bold mt-8 mb-4 text-gray-800">Recent Returned Records</h3>
+            <div id="returned-records-list" class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+                <!-- Records will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section id="inventory-section" class="content-section p-4 bg-white rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Current Inventory</h2>
+            <div id="inventory-list" class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+                <!-- Inventory will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section id="dispatch-deliveries-section" class="content-section p-4 bg-white rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Dispatch Products for Delivery</h2>
+            <form id="dispatch-form" class="space-y-4 mb-8 p-4 border border-gray-200 rounded-md">
+                <h3 class="text-xl font-semibold text-gray-700">New Delivery Dispatch</h3>
+                <div>
+                    <label for="dispatch-product-name" class="block text-sm font-medium text-gray-700">Select Product from Inventory</label>
+                    <select id="dispatch-product-name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                        <option value="">-- Select a product --</option>
+                        <!-- Products will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div>
+                    <label for="dispatch-quantity" class="block text-sm font-medium text-gray-700">Quantity to Dispatch</label>
+                    <input type="number" id="dispatch-quantity" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required min="1" />
+                </div>
+                <div>
+                    <label for="dispatch-customer-name" class="block text-sm font-medium text-gray-700">Customer Name</label>
+                    <input type="text" id="dispatch-customer-name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required />
+                </div>
+                <div>
+                    <label for="dispatch-sale-price-per-unit" class="block text-sm font-medium text-gray-700">Sale Price Per Unit</label>
+                    <input type="number" id="dispatch-sale-price-per-unit" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required min="0.01" step="0.01" />
+                </div>
+                <div>
+                    <label for="dispatch-driver-name" class="block text-sm font-medium text-gray-700">Driver Name</label>
+                    <input type="text" id="dispatch-driver-name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required />
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition duration-150 ease-in-out">Dispatch for Delivery</button>
+            </form>
+            <h3 class="text-xl font-bold mt-8 mb-4 text-gray-800">Current Deliveries</h3>
+            <div id="dispatched-deliveries-list" class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+                <!-- Deliveries will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section id="driver-dashboard-section" class="content-section p-4 bg-white rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Driver Dashboard</h2>
+            <div id="driver-login-prompt">
+                <form id="driver-name-form" class="space-y-4 mb-8 p-4 border border-gray-200 rounded-lg">
+                    <h3 class="text-xl font-semibold text-gray-700">Enter Your Name</h3>
+                    <div>
+                        <label for="driver-input-name" class="block text-sm font-medium text-gray-700">Your Name</label>
+                        <input type="text" id="driver-input-name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required />
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out">View My Deliveries</button>
+                </form>
+            </div>
+            <div id="driver-deliveries-content" class="hidden">
+                <h3 class="text-xl font-bold mb-4 text-gray-800" id="driver-deliveries-header">Deliveries for Driver</h3>
+                <div id="assigned-deliveries-list" class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+                    <!-- Assigned deliveries will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <section id="suppliers-payments-section" class="content-section p-4 bg-white rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Suppliers and Payments</h2>
+            <form id="payment-form" class="space-y-4 mb-8 p-4 border border-gray-200 rounded-md">
+                <h3 class="text-xl font-semibold text-gray-700">Record Payment to Supplier</h3>
+                <div>
+                    <label for="select-supplier" class="block text-sm font-medium text-gray-700">Select Supplier</label>
+                    <select id="select-supplier" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required>
+                        <option value="">-- Select a supplier --</option>
+                        <!-- Suppliers will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div>
+                    <label for="payment-amount" class="block text-sm font-medium text-gray-700">Payment Amount</label>
+                    <input type="number" id="payment-amount" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" required min="0.01" step="0.01" />
+                </div>
+                <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-150 ease-in-out">Record Payment</button>
+            </form>
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Supplier Balances</h3>
+            <div id="supplier-balances-list" class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+                <!-- Supplier balances will be populated by JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Message Modal -->
+    <div id="message-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center rounded-lg">
+            <p id="message-modal-text" class="text-lg font-semibold mb-4"></p>
+            <button id="message-modal-close" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-[100] hidden">
+        <div class="flex flex-col items-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+            <p class="text-white text-lg mt-4">Loading...</p>
+        </div>
+    </div>
+
+
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, updateDoc, getDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global state variables
+        let db;
+        let auth;
+        let currentUserId = null;
+        let isAdminLoggedIn = false;
+        let activePage = 'login'; // Initial page
+        let llmLoading = false; // LLM loading state
+
+        const DELIVERY_CHARGE = 25; // Constant for delivery charge
+
+        // DOM Elements
+        const adminLoginSection = document.getElementById('admin-login-section');
+        const adminLoginForm = document.getElementById('admin-login-form');
+        const driverLoginButton = document.getElementById('driver-login-button');
+        const mainNav = document.getElementById('main-nav');
+        const userIdDisplay = document.getElementById('user-id-display');
+        const userIdValueSpan = document.getElementById('user-id-value');
+        const messageModal = document.getElementById('message-modal');
+        const messageModalText = document.getElementById('message-modal-text');
+        const messageModalCloseButton = document.getElementById('message-modal-close');
+        const loadingOverlay = document.getElementById('loading-overlay');
+
+        // Page Sections
+        const incomingProductsSection = document.getElementById('incoming-products-section');
+        const returnedProductsSection = document.getElementById('returned-products-section');
+        const inventorySection = document.getElementById('inventory-section');
+        const dispatchDeliveriesSection = document.getElementById('dispatch-deliveries-section');
+        const driverDashboardSection = document.getElementById('driver-dashboard-section');
+        const suppliersPaymentsSection = document.getElementById('suppliers-payments-section');
+
+        // Admin Credentials
+        const ADMIN_USERNAME = 'henokabebe';
+        const ADMIN_PASSWORD = '1996';
+
+        /**
+         * Initializes Firebase and authenticates the user.
+         * Sets up Firestore and Auth instances.
+         */
+        async function initFirebase() {
+            try {
+                showLoadingOverlay();
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+                if (Object.keys(firebaseConfig).length === 0) {
+                    throw new Error("Firebase configuration is missing. Please ensure '__firebase_config' is defined.");
+                }
+
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Authenticate user
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // Listen for auth state changes
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        currentUserId = user.uid;
+                        userIdValueSpan.textContent = currentUserId;
+                        userIdDisplay.classList.remove('hidden');
+                    } else {
+                        currentUserId = null;
+                        userIdDisplay.classList.add('hidden');
+                    }
+                    hideLoadingOverlay();
+                    renderApp(); // Render the app after auth state is determined
+                });
+
+            } catch (err) {
+                console.error("Failed to initialize Firebase or authenticate:", err);
+                showMessageModal("Failed to initialize the application. Please try again later.");
+                hideLoadingOverlay();
+            }
+        }
+
+        /**
+         * Shows a message modal to the user.
+         * @param {string} message - The message to display.
+         */
+        function showMessageModal(message) {
+            messageModalText.textContent = message;
+            messageModal.classList.remove('hidden');
+        }
+
+        /**
+         * Hides the message modal.
+         */
+        function hideMessageModal() {
+            messageModal.classList.add('hidden');
+        }
+
+        /**
+         * Shows the loading overlay.
+         */
+        function showLoadingOverlay() {
+            loadingOverlay.classList.remove('hidden');
+        }
+
+        /**
+         * Hides the loading overlay.
+         */
+        function hideLoadingOverlay() {
+            loadingOverlay.classList.add('hidden');
+        }
+
+        /**
+         * Switches the active content section.
+         * @param {string} sectionId - The ID of the section to activate.
+         */
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('hidden');
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        /**
+         * Renders the appropriate UI based on login status and active page.
+         */
+        function renderApp() {
+            if (!currentUserId) {
+                // User is not authenticated, show loading or error.
+                // Firebase init takes care of initial loading.
+                // If currentUserId is null after init, it means anonymous sign-in failed or user logged out.
+                adminLoginSection.classList.remove('hidden');
+                showSection('admin-login-section'); // Ensure login is visible
+                mainNav.innerHTML = ''; // Clear nav
+                return;
+            }
+
+            adminLoginSection.classList.add('hidden'); // Hide login section once authenticated
+
+            // Render navigation based on admin status
+            mainNav.innerHTML = ''; // Clear existing nav buttons
+            if (isAdminLoggedIn) {
+                mainNav.innerHTML += `
+                    <button id="nav-incoming" class="px-4 py-2 rounded-md transition duration-300 ease-in-out">Incoming Products</button>
+                    <button id="nav-returned" class="px-4 py-2 rounded-md transition duration-300 ease-in-out">Returned Products</button>
+                    <button id="nav-inventory" class="px-4 py-2 rounded-md transition duration-300 ease-in-out">Inventory</button>
+                    <button id="nav-dispatch" class="px-4 py-2 rounded-md transition duration-300 ease-in-out">Dispatch & Deliveries</button>
+                    <button id="nav-suppliers" class="px-4 py-2 rounded-md transition duration-300 ease-in-out">Suppliers & Payments</button>
+                    <button id="nav-switch-to-driver" class="px-4 py-2 rounded-md bg-purple-600 text-white hover:bg-purple-700 transition duration-300 ease-in-out">Switch to Driver View</button>
+                    <button id="nav-logout" class="px-4 py-2 rounded-md bg-gray-600 text-white hover:bg-gray-700 transition duration-300 ease-in-out">Logout</button>
+                `;
+            } else {
+                mainNav.innerHTML += `
+                    <button id="nav-driver-dashboard" class="px-4 py-2 rounded-md transition duration-300 ease-in-out">Driver Dashboard</button>
+                `;
+            }
+
+            // Add event listeners for navigation
+            document.getElementById('nav-incoming')?.addEventListener('click', () => { activePage = 'incoming'; renderApp(); });
+            document.getElementById('nav-returned')?.addEventListener('click', () => { activePage = 'returned'; renderApp(); });
+            document.getElementById('nav-inventory')?.addEventListener('click', () => { activePage = 'inventory'; renderApp(); });
+            document.getElementById('nav-dispatch')?.addEventListener('click', () => { activePage = 'dispatch'; renderApp(); });
+            document.getElementById('nav-suppliers')?.addEventListener('click', () => { activePage = 'suppliers'; renderApp(); });
+            document.getElementById('nav-switch-to-driver')?.addEventListener('click', () => {
+                isAdminLoggedIn = false; // Switch admin state
+                activePage = 'driver';
+                renderApp();
+            });
+            document.getElementById('nav-driver-dashboard')?.addEventListener('click', () => { activePage = 'driver'; renderApp(); });
+            document.getElementById('nav-logout')?.addEventListener('click', async () => {
+                try {
+                    await auth.signOut();
+                    isAdminLoggedIn = false;
+                    activePage = 'login';
+                    renderApp();
+                    showMessageModal("Logged out successfully.");
+                } catch (e) {
+                    console.error("Error logging out:", e);
+                    showMessageModal("Error logging out.");
+                }
+            });
+
+            // Highlight active button
+            document.querySelectorAll('#main-nav button').forEach(button => {
+                button.classList.remove('bg-blue-600');
+                if (button.id === `nav-${activePage}` || (activePage === 'driver' && button.id === 'nav-driver-dashboard')) {
+                    button.classList.add('bg-blue-600');
+                }
+            });
+
+
+            // Show the active content section
+            switch (activePage) {
+                case 'incoming':
+                    showSection('incoming-products-section');
+                    setupIncomingProducts();
+                    break;
+                case 'returned':
+                    showSection('returned-products-section');
+                    setupReturnedProducts();
+                    break;
+                case 'inventory':
+                    showSection('inventory-section');
+                    setupInventory();
+                    break;
+                case 'dispatch':
+                    showSection('dispatch-deliveries-section');
+                    setupDispatchAndDeliveries();
+                    break;
+                case 'driver':
+                    showSection('driver-dashboard-section');
+                    setupDriverDashboard();
+                    break;
+                case 'suppliers':
+                    showSection('suppliers-payments-section');
+                    setupSuppliers();
+                    break;
+                default:
+                    // If no specific page, default to admin incoming if logged in, else login
+                    if (isAdminLoggedIn) {
+                        activePage = 'incoming';
+                        showSection('incoming-products-section');
+                        setupIncomingProducts();
+                    } else {
+                        showSection('admin-login-section');
+                    }
+                    break;
+            }
+        }
+
+        // --- Admin Login Logic ---
+        adminLoginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                isAdminLoggedIn = true;
+                activePage = 'incoming'; // Default admin page
+                renderApp();
+            } else {
+                showMessageModal('Invalid username or password.');
+            }
+        });
+
+        driverLoginButton.addEventListener('click', () => {
+            isAdminLoggedIn = false; // Ensure not admin
+            activePage = 'driver';
+            renderApp();
+        });
+
+        messageModalCloseButton.addEventListener('click', hideMessageModal);
+
+        // --- LLM API Call Helper ---
+        async function callGeminiApi(prompt) {
+            llmLoading = true;
+            showLoadingOverlay();
+            try {
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // Will be provided by the environment
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    return result.candidates[0].content.parts[0].text;
+                } else {
+                    console.error("Gemini API response structure unexpected:", result);
+                    return "Error: Could not generate response.";
+                }
+            } catch (e) {
+                console.error("Error calling Gemini API:", e);
+                return "Error: Failed to connect to AI service.";
+            } finally {
+                llmLoading = false;
+                hideLoadingOverlay();
+            }
+        }
+
+
+        // --- Incoming Products Logic ---
+        function setupIncomingProducts() {
+            const form = document.getElementById('incoming-form');
+            const supplierNameInput = document.getElementById('incoming-supplier-name');
+            const productNameInput = document.getElementById('incoming-product-name');
+            const quantityInput = document.getElementById('incoming-quantity');
+            const unitPriceInput = document.getElementById('incoming-unit-price');
+            const recordsList = document.getElementById('incoming-records-list');
+
+            // Clear form
+            form.reset();
+
+            // Clear previous listener to prevent duplicates
+            form.removeEventListener('submit', handleIncomingSubmit);
+            form.addEventListener('submit', handleIncomingSubmit);
+
+            // Setup real-time listener for incoming records
+            if (db && currentUserId) {
+                const q = query(
+                    collection(db, `artifacts/${__app_id}/users/${currentUserId}/transactions`),
+                    orderBy('date', 'desc')
+                );
+                onSnapshot(q, (snapshot) => {
+                    const records = snapshot.docs
+                        .filter(doc => doc.data().type === 'incoming')
+                        .map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderIncomingRecords(records);
+                }, (error) => {
+                    console.error("Error fetching incoming records:", error);
+                    showMessageModal("Error loading incoming records.");
+                });
+            }
+
+            async function handleIncomingSubmit(e) {
+                e.preventDefault();
+                if (!db || !currentUserId) {
+                    showMessageModal("Database not ready. Please wait.");
+                    return;
+                }
+                const supplierName = supplierNameInput.value.trim();
+                const productName = productNameInput.value.trim();
+                const quantity = parseInt(quantityInput.value);
+                const unitPrice = parseFloat(unitPriceInput.value);
+
+                if (!supplierName || !productName || isNaN(quantity) || quantity <= 0 || isNaN(unitPrice) || unitPrice <= 0) {
+                    showMessageModal("Please fill in all fields correctly (quantity and unit price must be positive numbers).");
+                    return;
+                }
+
+                try {
+                    const totalAmount = quantity * unitPrice;
+                    const date = new Date().toISOString();
+
+                    // Add transaction record
+                    await addDoc(collection(db, `artifacts/${__app_id}/users/${currentUserId}/transactions`), {
+                        type: 'incoming',
+                        supplierName,
+                        productName,
+                        quantity,
+                        unitPrice,
+                        totalAmount,
+                        date,
+                    });
+
+                    // Update or create product in inventory
+                    const productsCollectionRef = collection(db, `artifacts/${__app_id}/users/${currentUserId}/products`);
+                    const q = query(productsCollectionRef, where('productName', '==', productName));
+                    const querySnapshot = await getDocs(q);
+                    let productDocRef = null;
+                    let currentProductData = null;
+
+                    if (!querySnapshot.empty) {
+                        productDocRef = querySnapshot.docs[0].ref;
+                        currentProductData = querySnapshot.docs[0].data();
+                        await updateDoc(productDocRef, {
+                            quantity: (currentProductData.quantity || 0) + quantity,
+                        });
+                    } else {
+                        await addDoc(productsCollectionRef, {
+                            productName,
+                            quantity,
+                        });
+                    }
+
+                    // Update or create supplier balance
+                    const suppliersCollectionRef = collection(db, `artifacts/${__app_id}/users/${currentUserId}/suppliers`);
+                    const supplierQuery = query(suppliersCollectionRef, where('supplierName', '==', supplierName));
+                    const supplierSnapshot = await getDocs(supplierQuery);
+                    let supplierDocRef = null;
+                    let currentSupplierData = null;
+
+                    if (!supplierSnapshot.empty) {
+                        supplierDocRef = supplierSnapshot.docs[0].ref;
+                        currentSupplierData = supplierSnapshot.docs[0].data();
+                        await updateDoc(supplierDocRef, {
+                            balanceOwed: (currentSupplierData.balanceOwed || 0) + totalAmount,
+                        });
+                    } else {
+                        await addDoc(suppliersCollectionRef, {
+                            supplierName,
+                            balanceOwed: totalAmount,
+                        });
+                    }
+
+                    form.reset();
+                    showMessageModal('Incoming product recorded successfully!');
+                } catch (e) {
+                    console.error("Error adding document: ", e);
+                    showMessageModal("Error recording incoming product.");
+                }
+            }
+
+            function renderIncomingRecords(records) {
+                if (records.length === 0) {
+                    recordsList.innerHTML = '<p class="text-gray-600 p-4">No incoming records yet.</p>';
+                    return;
+                }
+                let tableHtml = `
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Amount</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                `;
+                records.forEach(record => {
+                    tableHtml += `
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.supplierName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.productName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.quantity}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${record.unitPrice ? record.unitPrice.toFixed(2) : '0.00'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${record.totalAmount ? record.totalAmount.toFixed(2) : '0.00'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(record.date).toLocaleString()}</td>
+                        </tr>
+                    `;
+                });
+                tableHtml += `</tbody></table>`;
+                recordsList.innerHTML = tableHtml;
+            }
+        }
+
+        // --- Returned Products Logic ---
+        function setupReturnedProducts() {
+            const form = document.getElementById('returned-form');
+            const supplierNameInput = document.getElementById('returned-supplier-name');
+            const productNameInput = document.getElementById('returned-product-name');
+            const quantityInput = document.getElementById('returned-quantity');
+            const unitPriceInput = document.getElementById('returned-unit-price');
+            const recordsList = document.getElementById('returned-records-list');
+
+            // Clear form
+            form.reset();
+
+            // Clear previous listener to prevent duplicates
+            form.removeEventListener('submit', handleReturnedSubmit);
+            form.addEventListener('submit', handleReturnedSubmit);
+
+            // Setup real-time listener for returned records
+            if (db && currentUserId) {
+                const q = query(
+                    collection(db, `artifacts/${__app_id}/users/${currentUserId}/transactions`),
+                    orderBy('date', 'desc')
+                );
+                onSnapshot(q, (snapshot) => {
+                    const records = snapshot.docs
+                        .filter(doc => doc.data().type === 'returned')
+                        .map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderReturnedRecords(records);
+                }, (error) => {
+                    console.error("Error fetching returned records:", error);
+                    showMessageModal("Error loading returned records.");
+                });
+            }
+
+            async function handleReturnedSubmit(e) {
+                e.preventDefault();
+                if (!db || !currentUserId) {
+                    showMessageModal("Database not ready. Please wait.");
+                    return;
+                }
+                const supplierName = supplierNameInput.value.trim();
+                const productName = productNameInput.value.trim();
+                const quantity = parseInt(quantityInput.value);
+                const unitPrice = parseFloat(unitPriceInput.value);
+
+                if (!supplierName || !productName || isNaN(quantity) || quantity <= 0 || isNaN(unitPrice) || unitPrice <= 0) {
+                    showMessageModal("Please fill in all fields correctly (quantity and unit price must be positive numbers).");
+                    return;
+                }
+
+                try {
+                    const totalAmount = quantity * unitPrice;
+                    const date = new Date().toISOString();
+
+                    // Add transaction record
+                    await addDoc(collection(db, `artifacts/${__app_id}/users/${currentUserId}/transactions`), {
+                        type: 'returned',
+                        supplierName,
+                        productName,
+                        quantity,
+                        unitPrice,
+                        totalAmount,
+                        date,
+                    });
+
+                    // Update product in inventory (decrease quantity)
+                    const productsCollectionRef = collection(db, `artifacts/${__app_id}/users/${currentUserId}/products`);
+                    const q = query(productsCollectionRef, where('productName', '==', productName));
+                    const querySnapshot = await getDocs(q);
+                    let productDocRef = null;
+                    let currentProductData = null;
+
+                    if (!querySnapshot.empty) {
+                        productDocRef = querySnapshot.docs[0].ref;
+                        currentProductData = querySnapshot.docs[0].data();
+                        const newQuantity = Math.max(0, (currentProductData.quantity || 0) - quantity);
+                        await updateDoc(productDocRef, {
+                            quantity: newQuantity,
+                        });
+                    } else {
+                        showMessageModal(`Product "${productName}" not found in inventory. Cannot record return.`);
+                        return;
+                    }
+
+                    // Update supplier balance (decrease amount owed to them)
+                    const suppliersCollectionRef = collection(db, `artifacts/${__app_id}/users/${currentUserId}/suppliers`);
+                    const supplierQuery = query(suppliersCollectionRef, where('supplierName', '==', supplierName));
+                    const supplierSnapshot = await getDocs(supplierQuery);
+                    let supplierDocRef = null;
+                    let currentSupplierData = null;
+
+                    if (!supplierSnapshot.empty) {
+                        supplierDocRef = supplierSnapshot.docs[0].ref;
+                        currentSupplierData = supplierSnapshot.docs[0].data();
+                        await updateDoc(supplierDocRef, {
+                            balanceOwed: Math.max(0, (currentSupplierData.balanceOwed || 0) - totalAmount),
+                        });
+                    } else {
+                        showMessageModal(`Supplier "${supplierName}" not found. Cannot adjust balance.`);
+                        return;
+                    }
+
+                    form.reset();
+                    showMessageModal('Returned product recorded successfully!');
+                } catch (e) {
+                    console.error("Error adding returned document: ", e);
+                    showMessageModal("Error recording returned product.");
+                }
+            }
+
+            function renderReturnedRecords(records) {
+                if (records.length === 0) {
+                    recordsList.innerHTML = '<p class="text-gray-600 p-4">No returned records yet.</p>';
+                    return;
+                }
+                let tableHtml = `
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Amount</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                `;
+                records.forEach(record => {
+                    tableHtml += `
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${record.supplierName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.productName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.quantity}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${record.unitPrice ? record.unitPrice.toFixed(2) : '0.00'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${record.totalAmount ? record.totalAmount.toFixed(2) : '0.00'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(record.date).toLocaleString()}</td>
+                        </tr>
+                    `;
+                });
+                tableHtml += `</tbody></table>`;
+                recordsList.innerHTML = tableHtml;
+            }
+        }
+
+        // --- Inventory Logic ---
+        function setupInventory() {
+            const inventoryList = document.getElementById('inventory-list');
+
+            if (db && currentUserId) {
+                const q = collection(db, `artifacts/${__app_id}/users/${currentUserId}/products`);
+                onSnapshot(q, (snapshot) => {
+                    const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderInventory(products);
+                }, (error) => {
+                    console.error("Error fetching inventory:", error);
+                    showMessageModal("Error loading inventory.");
+                });
+            }
+
+            function renderInventory(products) {
+                if (products.length === 0) {
+                    inventoryList.innerHTML = '<p class="text-gray-600 p-4">No products in inventory yet.</p>';
+                    return;
+                }
+                let tableHtml = `
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product Name</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity in Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                `;
+                products.forEach(product => {
+                    tableHtml += `
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${product.productName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.quantity}</td>
+                        </tr>
+                    `;
+                });
+                tableHtml += `</tbody></table>`;
+                inventoryList.innerHTML = tableHtml;
+            }
+        }
+
+        // --- Dispatch and Deliveries Logic ---
+        function setupDispatchAndDeliveries() {
+            const form = document.getElementById('dispatch-form');
+            const productSelect = document.getElementById('dispatch-product-name');
+            const quantityInput = document.getElementById('dispatch-quantity');
+            const customerNameInput = document.getElementById('dispatch-customer-name');
+            const salePricePerUnitInput = document.getElementById('dispatch-sale-price-per-unit');
+            const driverNameInput = document.getElementById('dispatch-driver-name');
+            const deliveriesList = document.getElementById('dispatched-deliveries-list');
+
+            // Clear form
+            form.reset();
+
+            // Clear previous listener to prevent duplicates
+            form.removeEventListener('submit', handleDispatchSubmit);
+            form.addEventListener('submit', handleDispatchSubmit);
+
+            // Populate product dropdown
+            if (db && currentUserId) {
+                const q = collection(db, `artifacts/${__app_id}/users/${currentUserId}/products`);
+                onSnapshot(q, (snapshot) => {
+                    const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    productSelect.innerHTML = '<option value="">-- Select a product --</option>';
+                    products.filter(p => p.quantity > 0).forEach(product => {
+                        const option = document.createElement('option');
+                        option.value = product.productName;
+                        option.textContent = `${product.productName} (Stock: ${product.quantity})`;
+                        productSelect.appendChild(option);
+                    });
+                }, (error) => {
+                    console.error("Error fetching products for dispatch:", error);
+                    showMessageModal("Error loading products for dispatch.");
+                });
+
+                // Setup real-time listener for dispatched deliveries
+                const deliveriesQuery = query(
+                    collection(db, `artifacts/${__app_id}/users/${currentUserId}/transactions`),
+                    where('type', '==', 'delivery')
+                );
+                onSnapshot(deliveriesQuery, (snapshot) => {
+                    const deliveries = snapshot.docs
+                        .map(doc => ({ id: doc.id, ...doc.data() }))
+                        .sort((a, b) => new Date(b.date) - new Date(a.date));
+                    renderDispatchedDeliveries(deliveries);
+                }, (error) => {
+                    console.error("Error fetching dispatched deliveries:", error);
+                    showMessageModal("Error loading dispatched deliveries.");
+                });
+            }
+
+            async function handleDispatchSubmit(e) {
+                e.preventDefault();
+                if (!db || !currentUserId) {
+                    showMessageModal("Database not ready. Please wait.");
+                    return;
+                }
+                const selectedProduct = productSelect.value.trim();
+                const dispatchQuantity = parseInt(quantityInput.value);
+                const customerName = customerNameInput.value.trim();
+                const salePricePerUnit = parseFloat(salePricePerUnitInput.value);
+                const driverName = driverNameInput.value.trim();
+
+                if (!selectedProduct || !customerName || !driverName || isNaN(dispatchQuantity) || dispatchQuantity <= 0 || isNaN(salePricePerUnit) || salePricePerUnit <= 0) {
+                    showMessageModal("Please fill in all dispatch fields correctly.");
+                    return;
+                }
+
+                // Check stock
+                const productsCollectionRef = collection(db, `artifacts/${__app_id}/users/${currentUserId}/products`);
+                const q = query(productsCollectionRef, where('productName', '==', selectedProduct));
+                const querySnapshot = await getDocs(q);
+                let productInStock = null;
+                if (!querySnapshot.empty) {
+                    productInStock = { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() };
+                }
+
+                if (!productInStock || productInStock.quantity < dispatchQuantity) {
+                    showMessageModal(`Not enough ${selectedProduct} in stock. Available: ${productInStock ? productInStock.quantity : 0}`);
+                    return;
+                }
+
+                try {
+                    const totalSaleAmount = dispatchQuantity * salePricePerUnit;
+                    const date = new Date().toISOString();
+
+                    // Create new delivery transaction
+                    await addDoc(collection(db, `artifacts/${__app_id}/users/${currentUserId}/transactions`), {
+                        type: 'delivery',
+                        productName: selectedProduct,
+                        quantity: dispatchQuantity,
+                        customerName,
+                        salePricePerUnit,
+                        totalSaleAmount,
+                        driverName: driverName.toLowerCase(), // Store driver name in lowercase for consistent querying
+                        deliveryStatus: 'out for delivery', // Initial status
+                        paymentStatus: 'unpaid', // Initial payment status from customer
+                        date,
+                    });
+
+                    // Update inventory
+                    const productDocRef = doc(db, `artifacts/${__app_id}/users/${currentUserId}/products`, productInStock.id);
+                    await updateDoc(productDocRef, {
+                        quantity: productInStock.quantity - dispatchQuantity,
+                    });
+
+                    form.reset();
+                    showMessageModal('Product dispatched for delivery successfully!');
+                } catch (e) {
+                    console.error("Error dispatching product: ", e);
+                    showMessageModal("Error dispatching product.");
+                }
+            }
+
+            function renderDispatchedDeliveries(deliveries) {
+                if (deliveries.length === 0) {
+                    deliveriesList.innerHTML = '<p class="text-gray-600 p-4">No products dispatched for delivery yet.</p>';
+                    return;
+                }
+                let tableHtml = `
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sale Price</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Sale</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Delivery Status</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                `;
+                deliveries.forEach(delivery => {
+                    const statusClass = delivery.deliveryStatus === 'delivered' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+                    tableHtml += `
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${delivery.productName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${delivery.quantity}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${delivery.customerName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${delivery.salePricePerUnit ? delivery.salePricePerUnit.toFixed(2) : '0.00'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${delivery.totalSaleAmount ? delivery.totalSaleAmount.toFixed(2) : '0.00'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${delivery.driverName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">
+                                    ${delivery.deliveryStatus}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(delivery.date).toLocaleString()}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                ${delivery.deliveryStatus === 'out for delivery' ?
+                                    `<button data-id="${delivery.id}" data-status="${delivery.deliveryStatus}" class="mark-delivered-btn text-indigo-600 hover:text-indigo-900 mr-2">Mark Delivered</button>` : ''
+                                }
+                                <button data-product="${delivery.productName}" data-customer="${delivery.customerName}" class="generate-notes-btn ml-2 bg-purple-500 text-white px-3 py-1 rounded-md hover:bg-purple-600 transition duration-150 ease-in-out text-xs" ${llmLoading ? 'disabled' : ''}>
+                                    ${llmLoading ? 'Generating...' : '✨ Generate Delivery Notes'}
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tableHtml += `</tbody></table>`;
+                deliveriesList.innerHTML = tableHtml;
+
+                // Add event listeners for dynamically created buttons
+                deliveriesList.querySelectorAll('.mark-delivered-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const id = e.target.dataset.id;
+                        const status = e.target.dataset.status;
+                        await updateDeliveryStatus(id, status);
+                    });
+                });
+                deliveriesList.querySelectorAll('.generate-notes-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const product = e.target.dataset.product;
+                        const customer = e.target.dataset.customer;
+                        const notes = await callGeminiApi(`Generate concise delivery notes for a driver for a delivery of "${product}" to customer "${customer}". Include general advice like "handle with care" if applicable, or suggest specific instructions like "leave at front door" or "call upon arrival" if it sounds like a common scenario. Keep it under 50 words.`);
+                        showMessageModal(`Generated Delivery Notes for ${customer} (${product}):\n\n"${notes}"`);
+                    });
+                });
+            }
+
+            async function updateDeliveryStatus(transactionId, currentStatus) {
+                if (!db || !currentUserId) {
+                    showMessageModal("Database not ready. Please wait.");
+                    return;
+                }
+                try {
+                    const transactionRef = doc(db, `artifacts/${__app_id}/users/${currentUserId}/transactions`, transactionId);
+                    const transactionDoc = await getDoc(transactionRef);
+                    if (!transactionDoc.exists()) {
+                        showMessageModal("Delivery record not found.");
+                        return;
+                    }
+                    const currentData = transactionDoc.data();
+                    let newStatus = currentStatus;
+
+                    if (currentStatus === 'out for delivery') {
+                        newStatus = 'delivered';
+                    } else {
+                        newStatus = 'out for delivery'; // Toggle back, though not typical for admin
+                    }
+
+                    await updateDoc(transactionRef, {
+                        deliveryStatus: newStatus,
+                    });
+                    showMessageModal(`Delivery status updated to '${newStatus}'.`);
+                } catch (e) {
+                    console.error("Error updating delivery status: ", e);
+                    showMessageModal("Error updating delivery status.");
+                }
+            }
+        }
+
+        // --- Driver Dashboard Logic ---
+        let currentDriverName = null; // State for the driver's name
+
+        function setupDriverDashboard() {
+            const driverLoginPrompt = document.getElementById('driver-login-prompt');
+            const driverNameForm = document.getElementById('driver-name-form');
+            const driverInputName = document.getElementById('driver-input-name');
+            const driverDeliveriesContent = document.getElementById('driver-deliveries-content');
+            const driverDeliveriesHeader = document.getElementById('driver-deliveries-header');
+            const assignedDeliveriesList = document.getElementById('assigned-deliveries-list');
+
+            // Clear previous listener to prevent duplicates
+            driverNameForm.removeEventListener('submit', handleDriverNameSubmit);
+            driverNameForm.addEventListener('submit', handleDriverNameSubmit);
+
+            if (currentDriverName) {
+                driverLoginPrompt.classList.add('hidden');
+                driverDeliveriesContent.classList.remove('hidden');
+                driverDeliveriesHeader.textContent = `Deliveries for ${currentDriverName}`;
+                // Setup real-time listener for assigned deliveries
+                if (db && currentUserId) {
+                    const q = query(
+                        collection(db, `artifacts/${__app_id}/users/${currentUserId}/transactions`),
+                        where('type', '==', 'delivery'),
+                        where('driverName', '==', currentDriverName.toLowerCase())
+                    );
+                    onSnapshot(q, (snapshot) => {
+                        const deliveries = snapshot.docs
+                            .map(doc => ({ id: doc.id, ...doc.data() }))
+                            .sort((a, b) => new Date(b.date) - new Date(a.date));
+                        renderAssignedDeliveries(deliveries);
+                    }, (error) => {
+                        console.error("Error fetching assigned deliveries:", error);
+                        showMessageModal("Error loading assigned deliveries.");
+                    });
+                }
+            } else {
+                driverLoginPrompt.classList.remove('hidden');
+                driverDeliveriesContent.classList.add('hidden');
+                driverInputName.value = ''; // Clear input on re-entry
+            }
+
+            async function handleDriverNameSubmit(e) {
+                e.preventDefault();
+                const name = driverInputName.value.trim();
+                if (name) {
+                    currentDriverName = name;
+                    showMessageModal(`Welcome, ${currentDriverName}! Here are your assigned deliveries.`);
+                    renderApp(); // Re-render to show dashboard content
+                } else {
+                    showMessageModal("Please enter your name to view deliveries.");
+                }
+            }
+
+            function renderAssignedDeliveries(deliveries) {
+                if (deliveries.length === 0) {
+                    assignedDeliveriesList.innerHTML = `<p class="text-gray-600 p-4">No deliveries assigned to ${currentDriverName} yet.</p>`;
+                    return;
+                }
+                let tableHtml = `
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Delivery Status</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                `;
+                deliveries.forEach(delivery => {
+                    const deliveryStatusClass = delivery.deliveryStatus === 'delivered' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+                    const paymentStatusClass = delivery.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+                    tableHtml += `
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${delivery.productName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${delivery.quantity}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${delivery.customerName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${deliveryStatusClass}">
+                                    ${delivery.deliveryStatus}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${paymentStatusClass}">
+                                    ${delivery.paymentStatus}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(delivery.date).toLocaleString()}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                ${delivery.deliveryStatus === 'out for delivery' ?
+                                    `<button data-id="${delivery.id}" data-status="${delivery.deliveryStatus}" data-total-sale="${delivery.totalSaleAmount}" class="driver-mark-delivered-btn text-indigo-600 hover:text-indigo-900 mr-2">Mark Delivered</button>` : ''
+                                }
+                                ${delivery.paymentStatus === 'unpaid' ?
+                                    `<button data-id="${delivery.id}" data-status="${delivery.paymentStatus}" class="driver-mark-paid-btn text-green-600 hover:text-green-900">Mark Paid</button>` : ''
+                                }
+                                <button data-customer="${delivery.customerName}" data-status="${delivery.deliveryStatus}" data-product="${delivery.productName}" class="driver-draft-message-btn ml-2 bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition duration-150 ease-in-out text-xs" ${llmLoading ? 'disabled' : ''}>
+                                    ${llmLoading ? 'Drafting...' : '✨ Draft Customer Message'}
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tableHtml += `</tbody></table>`;
+                assignedDeliveriesList.innerHTML = tableHtml;
+
+                // Add event listeners for dynamically created buttons
+                assignedDeliveriesList.querySelectorAll('.driver-mark-delivered-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const id = e.target.dataset.id;
+                        const status = e.target.dataset.status;
+                        const totalSale = parseFloat(e.target.dataset.totalSale);
+                        await updateDeliveryStatusFromDriver(id, status, totalSale);
+                    });
+                });
+                assignedDeliveriesList.querySelectorAll('.driver-mark-paid-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const id = e.target.dataset.id;
+                        const status = e.target.dataset.status;
+                        await updatePaymentStatus(id, status);
+                    });
+                });
+                assignedDeliveriesList.querySelectorAll('.driver-draft-message-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const customer = e.target.dataset.customer;
+                        const status = e.target.dataset.status;
+                        const product = e.target.dataset.product;
+                        const messageText = await callGeminiApi(`Draft a polite, concise message to customer "${customer}" about their order of "${product}". The delivery is currently "${status === 'out for delivery' ? 'on its way' : 'has been delivered'}". Keep it under 50 words.`);
+                        showMessageModal(`Drafted Message for ${customer}:\n\n"${messageText}"`);
+                    });
+                });
+            }
+
+            async function updateDeliveryStatusFromDriver(transactionId, currentStatus, currentTotalSaleAmount) {
+                if (!db || !currentUserId) {
+                    showMessageModal("Database not ready. Please wait.");
+                    return;
+                }
+                try {
+                    const transactionRef = doc(db, `artifacts/${__app_id}/users/${currentUserId}/transactions`, transactionId);
+                    let newStatus = currentStatus;
+                    let newTotalSaleAmount = currentTotalSaleAmount;
+
+                    if (currentStatus === 'out for delivery') {
+                        newStatus = 'delivered';
+                        // Deduct delivery charge only when marking as delivered
+                        newTotalSaleAmount = currentTotalSaleAmount - DELIVERY_CHARGE;
+                    } else {
+                        // If already delivered, allow toggling back (though typically not desired)
+                        newStatus = 'out for delivery';
+                        // If toggling back, add the delivery charge back (optional, depending on business logic)
+                        newTotalSaleAmount = currentTotalSaleAmount + DELIVERY_CHARGE;
+                    }
+
+                    await updateDoc(transactionRef, {
+                        deliveryStatus: newStatus,
+                        totalSaleAmount: newTotalSaleAmount, // Update the total sale amount
+                    });
+                    showMessageModal(`Delivery status updated to '${newStatus}'. Total sale amount adjusted.`);
+                } catch (e) {
+                    console.error("Error updating delivery status: ", e);
+                    showMessageModal("Error updating delivery status.");
+                }
+            }
+
+            async function updatePaymentStatus(transactionId, currentStatus) {
+                if (!db || !currentUserId) {
+                    showMessageModal("Database not ready. Please wait.");
+                    return;
+                }
+                try {
+                    const transactionRef = doc(db, `artifacts/${__app_id}/users/${currentUserId}/transactions`, transactionId);
+                    const newStatus = currentStatus === 'unpaid' ? 'paid' : 'unpaid'; // Toggle
+                    await updateDoc(transactionRef, {
+                        paymentStatus: newStatus,
+                    });
+                    showMessageModal(`Payment status updated to '${newStatus}'.`);
+                } catch (e) {
+                    console.error("Error updating payment status: ", e);
+                    showMessageModal("Error updating payment status.");
+                }
+            }
+        }
+
+        // --- Suppliers and Payments Logic ---
+        function setupSuppliers() {
+            const paymentForm = document.getElementById('payment-form');
+            const selectSupplier = document.getElementById('select-supplier');
+            const paymentAmountInput = document.getElementById('payment-amount');
+            const supplierBalancesList = document.getElementById('supplier-balances-list');
+
+            // Clear form
+            paymentForm.reset();
+
+            // Clear previous listener to prevent duplicates
+            paymentForm.removeEventListener('submit', handlePaymentSubmit);
+            paymentForm.addEventListener('submit', handlePaymentSubmit);
+
+            // Populate supplier dropdown and list balances
+            if (db && currentUserId) {
+                const q = collection(db, `artifacts/${__app_id}/users/${currentUserId}/suppliers`);
+                onSnapshot(q, (snapshot) => {
+                    const suppliers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderSuppliers(suppliers);
+                    selectSupplier.innerHTML = '<option value="">-- Select a supplier --</option>';
+                    suppliers.forEach(supplier => {
+                        const option = document.createElement('option');
+                        option.value = supplier.id;
+                        option.textContent = supplier.supplierName;
+                        selectSupplier.appendChild(option);
+                    });
+                }, (error) => {
+                    console.error("Error fetching suppliers:", error);
+                    showMessageModal("Error loading suppliers.");
+                });
+            }
+
+            async function handlePaymentSubmit(e) {
+                e.preventDefault();
+                if (!db || !currentUserId) {
+                    showMessageModal("Database not ready. Please wait.");
+                    return;
+                }
+                const selectedSupplierId = selectSupplier.value;
+                const paymentAmount = parseFloat(paymentAmountInput.value);
+
+                if (!selectedSupplierId || isNaN(paymentAmount) || paymentAmount <= 0) {
+                    showMessageModal("Please select a supplier and enter a positive payment amount.");
+                    return;
+                }
+
+                try {
+                    const supplierDocRef = doc(db, `artifacts/${__app_id}/users/${currentUserId}/suppliers`, selectedSupplierId);
+                    const supplierDoc = await getDoc(supplierDocRef);
+
+                    if (supplierDoc.exists()) {
+                        const currentBalance = supplierDoc.data().balanceOwed || 0;
+                        const newBalance = Math.max(0, currentBalance - paymentAmount);
+                        await updateDoc(supplierDocRef, {
+                            balanceOwed: newBalance,
+                        });
+                        showMessageModal(`Payment of $${paymentAmount.toFixed(2)} recorded for ${supplierDoc.data().supplierName}. New balance: $${newBalance.toFixed(2)}.`);
+                        paymentForm.reset();
+                    } else {
+                        showMessageModal("Supplier not found.");
+                    }
+                } catch (e) {
+                    console.error("Error recording payment: ", e);
+                    showMessageModal("Error recording payment.");
+                }
+            }
+
+            function renderSuppliers(suppliers) {
+                if (suppliers.length === 0) {
+                    supplierBalancesList.innerHTML = '<p class="text-gray-600 p-4">No suppliers recorded yet.</p>';
+                    return;
+                }
+                let tableHtml = `
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier Name</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance Owed</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                `;
+                suppliers.forEach(supplier => {
+                    tableHtml += `
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${supplier.supplierName}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${supplier.balanceOwed !== undefined ? supplier.balanceOwed.toFixed(2) : '0.00'}</td>
+                        </tr>
+                    `;
+                });
+                tableHtml += `</tbody></table>`;
+                supplierBalancesList.innerHTML = tableHtml;
+            }
+        }
+
+        // Initialize the app when the window loads
+        window.onload = initFirebase;
+
+    </script>
+</body>
+</html>
